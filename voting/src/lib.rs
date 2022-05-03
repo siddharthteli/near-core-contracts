@@ -1,9 +1,9 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{UnorderedMap, Vector};
 use near_sdk::{env, near_bindgen, AccountId};
-
+use serde::{Serialize, Deserialize};
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize )]
 pub struct Party {
     owner: AccountId,
     symbol: String,
@@ -16,6 +16,18 @@ pub struct VoteDetails {
     votes: UnorderedMap<AccountId, Party>,
     total_votes: u128,
     party_vote_count: UnorderedMap<AccountId, u128>,
+}
+
+
+impl Default for VoteDetails {
+     fn default() -> Self {
+        VoteDetails {
+            party : Vector::new(b"p"),
+            votes: UnorderedMap::new(b"v"),
+            total_votes: 0,
+            party_vote_count: UnorderedMap::new(b"c"),
+        }
+    }
 }
 
 #[near_bindgen]
@@ -50,4 +62,6 @@ impl VoteDetails {
 
         self.votes.insert(&env::signer_account_id(), &party_owner);
     }
+
+ 
 }
